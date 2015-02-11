@@ -5,8 +5,13 @@ module Ruboty
 
       def evaluate(message)
         thread = Thread.start do
-          result = `#{message[:command]}`.chomp!
-          message.reply(result)
+          stdout, stderr, status = Open3.capture3(message[:command])
+          message.reply(stdout.chomp) if stdout
+          message.reply(stderr.chomp) if stderr
+
+          unless status.success?
+            message.reply("Command Failed:\n#{message[:command]}", code: true)
+          end
         end
         Thread.start do
           sleep 10
