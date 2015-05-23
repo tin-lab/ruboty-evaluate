@@ -8,8 +8,8 @@ module Ruboty
       def evaluate(message)
         thread = Thread.start do
           stdout, stderr, _status = Open3.capture3(message[:command])
-          message.reply(stdout.chomp) if stdout
-          message.reply(stderr.chomp) if stderr
+          stdout.chomp!.split("\n").each {|line| message.reply(line) } if stdout
+          stderr.chomp!.split("\n").each {|line| message.reply(line) } if stderr
         end
         Thread.start do
           sleep 10
