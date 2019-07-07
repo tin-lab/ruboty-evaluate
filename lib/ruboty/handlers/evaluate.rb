@@ -6,8 +6,9 @@ module Ruboty
       on /eval (?<command>.+)/, name: 'evaluate', description: 'Evaluate a command'
 
       def evaluate(message)
+        command = message[:command]
         thread = Thread.start do
-          stdout, stderr, _status = Open3.capture3(message[:command])
+          stdout, stderr, _status = Open3.capture3(command)
           stdout.chomp!.split("\n").each {|line| message.reply(line) } if stdout
           stderr.chomp!.split("\n").each {|line| message.reply(line) } if stderr
         end
